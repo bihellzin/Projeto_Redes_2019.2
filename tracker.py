@@ -106,11 +106,6 @@ class Server:
         self.who_has = docs[0]
         self.is_on = docs[1]
     
-    def what_is_it(self, data):
-        #This function will define whether or not
-        #what 
-        pass
-    
     
     def listen(self):
         #UNTESTED METHOD
@@ -123,28 +118,34 @@ class Server:
             connection, client_address = sock.accept()
             try:
                 while True:
-                    data = connection.recv(16)
+                    data = connection.recv(18)
+                    #Tamanho máximo de um IP address + 3 caracteres
                     self.peer_is_on(client_address)
                     #We first gotta define how the client
                     #will send his requests to the tracker
                     #and how the tracker will behave
                     #under these coments, we have just an idea of what we can do:
-                    datatype = self.what_is_it(data)
-                    if(datatype == "REQUEST"):
-                        who = self.looking_for(data)
-                        #This "data" is supposed to be the data after the trim of its header
-                        connection.sendall(data)
-                    elif(datatype == "SOMEONE'S OFF"):
-                        self.peer_is_off(data)
+                    datatype = data[0:3]
+                    if(datatype == "REQ"):
+                        who = self.looking_for(data[3:])
+                        if(len(who[0] < 15)):
+                            dif = 15 - len(who[0])
+                        for i in range(dif):
+                            who[0] = who[0] + ""
+                        connection.sendall(who[0])
+                    elif(datatype == "SOM"):
+                        self.peer_is_off(data[3:])
                         #Same as above
                         connection.sendall("OK")
-                    elif(datatype == "LOSS"):
-                        self.peer_lost_something(data, client_address)
-                        #Same as above
+                    elif(datatype == "LOS"):
+                        self.peer_lost_something(data[3:], client_address)
+                        #needs improvement in order to keep accepting more stuff in the same message
                         connection.sendall("OK")
                     elif(datatype == "NEW"):
-                        self.peer_got_something(data, client_address)
+                        self.peer_got_something(data[3:], client_address)
                         #Same as above
+                        connection.sendall("OK")
+                    elif(datatype == "LOG"):
                         connection.sendall("OK")
                     else:
                         connection.sendall("Sorry, I can't understand you")
