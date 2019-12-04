@@ -21,10 +21,11 @@ class Client:
     def new_stuff(self):
         #Incomplete
         #I also don't knwo how to get our own IP address
-        if(os.path.exists("share")):
-            os.mkdir("share")
+        if not os.path.exists("C:\\shared"):
+            os.mkdir("C:\\shared")
+            # os.
         else:
-            pass
+            os.
         #Same questions as "im_off()", might ask ehammo
         
     
