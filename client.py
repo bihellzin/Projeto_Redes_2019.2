@@ -60,6 +60,13 @@ class Client:
             msg = "SOM" + peer
             moi.sendall(msg)
             data = moi.recv(2)
+            item=data.decode("utf-8")
+            if item  == "OK":
+                print("Peer is off")
+            
+            else:
+                print("Failed")
+                
             #The length of the response will be only 2 chars
         finally:
             moi.close()
